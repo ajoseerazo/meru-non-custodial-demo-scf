@@ -38,7 +38,7 @@ const CreateAccount = ({
 
       const deviceKeypair = StellarSdk.Keypair.random();
 
-      encryptSecretKey(deviceKeypair.secret("deviceEncryptedKey"));
+      encryptSecretKey(deviceKeypair.secret(), "deviceEncryptedKey");
 
       const { transaction: transactionDeviceString } =
         await StellarCoreAPI.createStellarAccount(deviceKeypair.publicKey());

@@ -173,6 +173,46 @@ class StellarService {
 
     return transaction;
   }
+
+  static sendPaymentEnvelope = async (
+    amount: String,
+    destinationAccount: String,
+    publicKey: string,
+    secretKey: string,
+    assetCode: string,
+    assetIssuer: string,
+    memo?: string
+  ) => {
+    const account = await this.server.loadAccount(publicKey);
+
+    const fee = FEE;
+
+    const transactionBuilder = new StellarSdk.TransactionBuilder(account, {
+      fee,
+      networkPassphrase: STELLAR_NETWORK_PASSPHRASE,
+    }).addOperation(
+      StellarSdk.Operation.payment({
+        destination: destinationAccount,
+        asset: new StellarSdk.Asset(assetCode, assetIssuer),
+        amount: amount,
+        source: publicKey,
+      })
+    );
+
+    if (memo) {
+      const hex = new Buffer(memo, "base64").toString("hex");
+
+      transactionBuilder.addMemo(new StellarSdk.Memo("hash", hex));
+    }
+
+    const transaction = transactionBuilder.setTimeout(TX_TIMEOUT).build();
+
+    const keyPair = Keypair.fromSecret(secretKey);
+
+    transaction.sign(keyPair);
+
+    return transaction.toXDR();
+  };
 }
 
 export default StellarService;

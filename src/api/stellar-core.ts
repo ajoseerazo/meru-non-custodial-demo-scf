@@ -28,7 +28,7 @@ class StellarCoreAPI {
 
   static async getTransactionBumped(transaction: string, jwt: string) {
     const result = await fetch(
-      `${STELLAR_CORE}/transactions/bump-transaction/submit`,
+      `${STELLAR_CORE}/transactions/bump-transaction`,
       {
         method: "POST",
         headers: {

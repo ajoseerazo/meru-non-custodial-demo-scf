@@ -24,3 +24,7 @@ export const getSecretKey = (key?: string) => {
 
   return decryptedSecretKey;
 };
+
+export const getPublicKey = () => {
+  return localStorage.getItem("publicKey");
+};
