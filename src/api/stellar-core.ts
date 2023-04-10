@@ -56,7 +56,7 @@ class StellarCoreAPI {
     jwt: string
   ) {
     const result = await fetch(
-      `${STELLAR_CORE}/accounts/non-custodial/create-trustline`,
+      `${STELLAR_CORE}/core/accounts/non-custodial/create-trustline`,
       {
         method: "POST",
         headers: {

@@ -104,6 +104,21 @@ const CreateAccount = ({
         changeSignerToKeyRecoveryServerTransactionSigned
       );
 
+      const { transaction: transactionTrustTransactionStr } =
+        await StellarCoreAPI.getCreateTrustlineWithAssetEnvelop(
+          "USDC",
+          "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+          publicKey,
+          jwt2
+        );
+
+      const changeTrustlineTransactionSigned = StellarService.signRawTransacton(
+        transactionTrustTransactionStr,
+        deviceKeypair.secret()
+      );
+
+      await StellarService.submitTransaction(changeTrustlineTransactionSigned);
+
       // const changeSignersTransactionString = await StellarService.changeSigners(
       //   deviceKeypair.publicKey(),
       //   secretKey
