@@ -10,7 +10,7 @@ class Sep30API {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
+        Accept: "application/json",
         Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
@@ -27,6 +27,30 @@ class Sep30API {
         ],
       }),
     }).then((res) => res.json());
+
+    return response;
+  }
+
+  static async signTransaction(
+    publicKey: string,
+    signerKey: string,
+    transaction: string,
+    jwtToken: string
+  ) {
+    const response = await fetch(
+      `${SEP30_URL}/accounts/${publicKey}/sign/${signerKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          transaction,
+        }),
+      }
+    ).then((res) => res.json());
 
     return response;
   }

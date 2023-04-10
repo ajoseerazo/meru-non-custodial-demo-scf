@@ -50,15 +50,13 @@ class StellarService {
     }
   };
 
-  static signRawTransacton(transactionString: string) {
+  static signRawTransacton(transactionString: string, secretKey: string) {
     console.log(transactionString);
 
     const transaction = StellarSdk.TransactionBuilder.fromXDR(
       transactionString,
       STELLAR_NETWORK_PASSPHRASE
     );
-
-    const secretKey = getSecretKey();
 
     const keypair = Keypair.fromSecret(secretKey);
 
@@ -67,9 +65,7 @@ class StellarService {
     return transaction;
   }
 
-  static getAuthToken = async () => {
-    const secretKey = getSecretKey();
-
+  static getAuthToken = async (secretKey: string) => {
     const keyPair = Keypair.fromSecret(secretKey);
 
     const jwt: string = await authenticate(
@@ -84,9 +80,59 @@ class StellarService {
     return jwt;
   };
 
-  static changeSigners = async (signer: string) => {
-    const secretKey = getSecretKey();
+  static getAuthTokenFromPublic = async (publicKey: string) => {
+    let response: any = await fetch(
+      `${SEP_10_WEB_AUTH_SERVER}?account=${publicKey}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).then((res) => res.json());
 
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    const {
+      transaction: transactionString,
+      network_passphrase: networkPassphrase,
+    } = response;
+
+    const transaction = StellarSdk.TransactionBuilder.fromXDR(
+      transactionString,
+      networkPassphrase
+    );
+
+    const keypair = StellarSdk.Keypair.fromSecret(
+      process.env.SIGNER_SECRET_KEY
+    );
+
+    transaction.sign(keypair);
+
+    const signedTransaction = transaction.toEnvelope().toXDR("base64");
+
+    console.log("Signed Transaction", signedTransaction);
+
+    response = await fetch(`${SEP_10_WEB_AUTH_SERVER}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        transaction: signedTransaction,
+      }),
+    }).then((res) => res.json());
+
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    return response.token;
+  };
+
+  static changeSigners = async (signer: string, secretKey: string) => {
     const keyPair = Keypair.fromSecret(secretKey);
 
     const publicKey = keyPair.publicKey();

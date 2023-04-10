@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import StellarSdk from "stellar-sdk";
-import { encryptSecretKey } from "../utils/crypto";
+import { encryptSecretKey, getSecretKey } from "../utils/crypto";
 import StellarCoreAPI from "../api/stellar-core";
 import StellarService from "../services/stellar";
 import Sep30API from "../api/sep-30";
@@ -25,47 +25,144 @@ const CreateAccount = ({
       const { transaction: transactionString } =
         await StellarCoreAPI.createStellarAccount(publicKey);
 
-      const transaction = StellarService.signRawTransacton(transactionString);
+      const secretKey = getSecretKey();
+
+      const transaction = StellarService.signRawTransacton(
+        transactionString,
+        secretKey
+      );
 
       console.log(transaction);
 
       await StellarService.submitTransaction(transaction);
 
-      const jwt = await StellarService.getAuthToken();
+      const deviceKeypair = StellarSdk.Keypair.random();
+
+      encryptSecretKey(deviceKeypair.secret("deviceEncryptedKey"));
+
+      const { transaction: transactionDeviceString } =
+        await StellarCoreAPI.createStellarAccount(deviceKeypair.publicKey());
+
+      console.log(transactionDeviceString);
+
+      const transactionDevice = StellarService.signRawTransacton(
+        transactionDeviceString,
+        deviceKeypair.secret()
+      );
+
+      await StellarService.submitTransaction(transactionDevice);
+
+      const jwt = await StellarService.getAuthToken(secretKey);
+
+      const { transaction: changeSignerToDeviceKeyTransactionStr } =
+        await StellarCoreAPI.changeSigner(
+          publicKey,
+          deviceKeypair.publicKey(),
+          true,
+          jwt
+        );
+
+      console.log(changeSignerToDeviceKeyTransactionStr);
+
+      const changeSignerToDeviceKeyTransactionSigned =
+        StellarService.signRawTransacton(
+          changeSignerToDeviceKeyTransactionStr,
+          secretKey
+        );
+
+      await StellarService.submitTransaction(
+        changeSignerToDeviceKeyTransactionSigned
+      );
+
+      const jwt2 = await StellarService.getAuthToken(deviceKeypair.secret());
 
       const { signers } = await Sep30API.registerAccount(
         publicKey,
         "ajose.erazo@gmail.com",
-        jwt
+        jwt2
       );
 
-      console.log(signers);
+      const keyServerSigner = signers[0].key;
 
-      const changeSignersTransaction = await StellarService.changeSigners(
-        signers[0].key
-      );
-
-      const jwt2 = await StellarService.getAuthToken();
-
-      const { transaction: transactionBumpedString } =
-        await StellarCoreAPI.getTransactionBumped(
-          changeSignersTransaction,
+      const { transaction: changeSignerToKeyRecoveryServerKeyTransactionStr } =
+        await StellarCoreAPI.changeSigner(
+          publicKey,
+          keyServerSigner,
+          false,
           jwt2
         );
 
-      console.log(transactionBumpedString);
+      console.log(changeSignerToKeyRecoveryServerKeyTransactionStr);
 
-      const transactionBumped = StellarService.buildTransactionFromString(
-        transactionBumpedString
+      const changeSignerToKeyRecoveryServerTransactionSigned =
+        StellarService.signRawTransacton(
+          changeSignerToKeyRecoveryServerKeyTransactionStr,
+          deviceKeypair.secret()
+        );
+
+      await StellarService.submitTransaction(
+        changeSignerToKeyRecoveryServerTransactionSigned
       );
 
-      console.log(transactionBumped);
+      // const changeSignersTransactionString = await StellarService.changeSigners(
+      //   deviceKeypair.publicKey(),
+      //   secretKey
+      // );
 
-      await StellarService.submitTransaction(transactionBumped);
+      // const changeSignersTransaction =
+      //   StellarService.buildTransactionFromString(
+      //     changeSignersTransactionString
+      //   );
 
-      console.log("Signers Changed");
+      // await StellarService.submitTransaction(changeSignersTransaction);
 
-      console.log(changeSignersTransaction);
+      // const jwt = await StellarService.getAuthToken();
+
+      // const { signers } = await Sep30API.registerAccount(
+      //   publicKey,
+      //   "ajose.erazo@gmail.com",
+      //   jwt
+      // );
+
+      // console.log(signers);
+
+      // const jwt2 = await StellarService.getAuthToken();
+
+      // const trustTransactionEnvelope =
+      //   await StellarCoreAPI.getCreateTrustlineWithAssetEnvelop(
+      //     "USDC",
+      //     "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+      //     publicKey,
+      //     jwt2
+      //   );
+
+      // console.log(trustTransactionEnvelope);
+
+      // // const changeSignersTransaction = await StellarService.changeSigners(
+      // //   signers[0].key
+      // // );
+
+      // const jwt2 = await StellarService.getAuthToken();
+
+      // const { transaction: transactionBumpedString } =
+      //   await StellarCoreAPI.getTransactionBumped(
+      //     changeSignersTransaction,
+      //     jwt2
+      //   );
+
+      // console.log(transactionBumpedString);
+
+      // const transactionBumped = StellarService.buildTransactionFromString(
+      //   transactionBumpedString
+      // );
+
+      // console.log(transactionBumped);
+
+      // await StellarService.submitTransaction(transactionBumped);
+
+      // console.log("Signers Changed");
+
+      // console.log(changeSignersTransaction);
 
       localStorage.setItem("publicKey", publicKey);
 

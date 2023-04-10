@@ -48,6 +48,66 @@ class StellarCoreAPI {
 
     return result;
   }
+
+  static async getCreateTrustlineWithAssetEnvelop(
+    assetCode: string,
+    assetIssuer: string,
+    source: string,
+    jwt: string
+  ) {
+    const result = await fetch(
+      `${STELLAR_CORE}/accounts/non-custodial/create-trustline`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          assetCode,
+          assetIssuer,
+          source,
+        }),
+      }
+    ).then((res) => res.json());
+
+    if (result.error) {
+      throw new Error(result.error);
+    }
+
+    return result;
+  }
+
+  static async changeSigner(
+    publicKey: string,
+    signerKey: string,
+    removeMasterKey: boolean,
+    jwt: string
+  ) {
+    const result = await fetch(
+      `${STELLAR_CORE}/core/accounts/non-custodial/change-signers`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify({
+          publicKey,
+          signerKey,
+          removeMasterKey,
+        }),
+      }
+    ).then((res) => res.json());
+
+    if (result.error) {
+      throw new Error(result.error);
+    }
+
+    return result;
+  }
 }
 
 export default StellarCoreAPI;
