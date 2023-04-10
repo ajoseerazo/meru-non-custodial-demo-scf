@@ -1,6 +1,6 @@
 const Loading = (props: any) => {
   return (
-    <div role="status">
+    <div role="status" className="flex flex-row">
       <svg
         aria-hidden="true"
         className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -17,7 +17,7 @@ const Loading = (props: any) => {
           fill="currentFill"
         />
       </svg>
-      <span>{props.text ?? "Loading"}...</span>
+      <span className="ml-4">{props.text ?? "Loading"}...</span>
     </div>
   );
 };
