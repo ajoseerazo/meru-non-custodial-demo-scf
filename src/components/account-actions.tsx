@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import StellarService from "../services/stellar";
 import StellarCoreAPI from "../api/stellar-core";
 import { getPublicKey, getSecretKey } from "../utils/crypto";
+import Loading from "./loading";
 
 const AccountActions = (props: any) => {
   const [isLoadingTrustline, setIsLoadingTrustline] = useState<boolean>();
@@ -95,7 +96,11 @@ const AccountActions = (props: any) => {
           disabled={!usdcAmount || !address}
           onClick={sendUSDCPayment}
         >
-          {isSendingPayment ? "Sending..." : "Send USDC Payment"}
+          {isSendingPayment ? (
+            <Loading text={"Sending"} />
+          ) : (
+            "Send USDC Payment"
+          )}
         </button>
       </div>
 

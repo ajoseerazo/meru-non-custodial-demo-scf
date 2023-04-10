@@ -4,6 +4,7 @@ import { encryptSecretKey, getSecretKey } from "../utils/crypto";
 import StellarCoreAPI from "../api/stellar-core";
 import StellarService from "../services/stellar";
 import Sep30API from "../api/sep-30";
+import Loading from "./loading";
 
 const CreateAccount = ({
   onAccountCreated,
@@ -196,7 +197,7 @@ const CreateAccount = ({
       className="bg-blue-600 rounded-lg text-white px-6 py-2 shadow-lg"
       onClick={createStellarAccount}
     >
-      {isLoading ? "Creating" : "Create Stellar Account"}
+      {isLoading ? <Loading text={"Creating"} /> : "Create Stellar Account"}
     </button>
   );
 };
