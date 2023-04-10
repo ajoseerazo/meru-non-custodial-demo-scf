@@ -107,6 +107,7 @@ class StellarService {
             ed25519PublicKey: signer,
             weight: 1,
           },
+          source: publicKey,
         })
       )
       .setTimeout(TX_TIMEOUT)

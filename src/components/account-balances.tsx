@@ -22,6 +22,10 @@ function AccountBalances(props: any) {
         }));
 
         setBalances(newBalances);
+
+        if (props.onLoadBalances) {
+          props.onLoadBalances(newBalances);
+        }
       } catch (error) {
         console.error(error);
       }

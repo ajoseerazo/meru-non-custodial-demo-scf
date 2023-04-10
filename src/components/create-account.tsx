@@ -4,6 +4,7 @@ import { encryptSecretKey } from "../utils/crypto";
 import StellarCoreAPI from "../api/stellar-core";
 import StellarService from "../services/stellar";
 import Sep30API from "../api/sep-30";
+import { v4 as uuid } from "uuid";
 
 const CreateAccount = ({
   onAccountCreated,
@@ -16,60 +17,13 @@ const CreateAccount = ({
     try {
       setIsLoading(true);
 
-      const keypair = StellarSdk.Keypair.random();
-
-      const publicKey = keypair.publicKey();
-
-      encryptSecretKey(keypair.secret());
-
-      const { transaction: transactionString } =
-        await StellarCoreAPI.createStellarAccount(publicKey);
-
-      const transaction = StellarService.signRawTransacton(transactionString);
-
-      console.log(transaction);
-
-      await StellarService.submitTransaction(transaction);
-
-      const jwt = await StellarService.getAuthToken();
-
-      const { signers } = await Sep30API.registerAccount(
-        publicKey,
-        "ajose.erazo@gmail.com",
-        jwt
+      const { account } = await StellarCoreAPI.createCustodialStellarAccount(
+        uuid()
       );
 
-      console.log(signers);
+      localStorage.setItem("publicKey", account.publicKey);
 
-      const changeSignersTransaction = await StellarService.changeSigners(
-        signers[0].key
-      );
-
-      const jwt2 = await StellarService.getAuthToken();
-
-      const { transaction: transactionBumpedString } =
-        await StellarCoreAPI.getTransactionBumped(
-          changeSignersTransaction,
-          jwt2
-        );
-
-      console.log(transactionBumpedString);
-
-      const transactionBumped = StellarService.buildTransactionFromString(
-        transactionBumpedString
-      );
-
-      console.log(transactionBumped);
-
-      await StellarService.submitTransaction(transactionBumped);
-
-      console.log("Signers Changed");
-
-      console.log(changeSignersTransaction);
-
-      localStorage.setItem("publicKey", publicKey);
-
-      onAccountCreated(publicKey);
+      onAccountCreated(account.publicKey);
     } catch (err: any) {
       console.error(err);
 
