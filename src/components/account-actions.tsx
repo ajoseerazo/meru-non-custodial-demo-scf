@@ -54,6 +54,10 @@ const AccountActions = (props: any) => {
       await StellarService.submitTransaction(transactionBumped);
 
       alert("Payment sent successfuly");
+
+      if (props.onPaymentSuccess) {
+        props.onPaymentSuccess();
+      }
     } catch (err) {
       alert(err);
     } finally {
