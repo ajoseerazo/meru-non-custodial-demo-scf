@@ -49,8 +49,6 @@ const AccountActions = (props: any) => {
         props.publicKey
       );
 
-      console.log(jwtToken);
-
       await StellarCoreAPI.sendPaymentToAccount(
         usdcAmount!,
         "USDC",
@@ -121,7 +119,7 @@ const AccountActions = (props: any) => {
         className="bg-blue-600 rounded-lg text-white px-6 py-2 shadow-lg mt-12"
         onClick={logout}
       >
-        Exit
+        Logout
       </button>
     </div>
   );
