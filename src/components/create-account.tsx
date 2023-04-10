@@ -33,7 +33,7 @@ const CreateAccount = ({
         secretKey
       );
 
-      console.log(transaction);
+      // console.log(transaction);
 
       await StellarService.submitTransaction(transaction);
 
@@ -44,7 +44,7 @@ const CreateAccount = ({
       const { transaction: transactionDeviceString } =
         await StellarCoreAPI.createStellarAccount(deviceKeypair.publicKey());
 
-      console.log(transactionDeviceString);
+      // console.log(transactionDeviceString);
 
       const transactionDevice = StellarService.signRawTransacton(
         transactionDeviceString,
@@ -63,7 +63,7 @@ const CreateAccount = ({
           jwt
         );
 
-      console.log(changeSignerToDeviceKeyTransactionStr);
+      // console.log(changeSignerToDeviceKeyTransactionStr);
 
       const changeSignerToDeviceKeyTransactionSigned =
         StellarService.signRawTransacton(
@@ -93,7 +93,7 @@ const CreateAccount = ({
           jwt2
         );
 
-      console.log(changeSignerToKeyRecoveryServerKeyTransactionStr);
+      // console.log(changeSignerToKeyRecoveryServerKeyTransactionStr);
 
       const changeSignerToKeyRecoveryServerTransactionSigned =
         StellarService.signRawTransacton(

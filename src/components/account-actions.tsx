@@ -24,11 +24,11 @@ const AccountActions = (props: any) => {
 
       const publicKey = getPublicKey();
 
-      console.log(publicKey);
+      // console.log(publicKey);
 
       const secretKey = getSecretKey("deviceEncryptedKey");
 
-      console.log(secretKey);
+      // console.log(secretKey);
 
       const paymentTransactionEnvelope =
         await StellarService.sendPaymentEnvelope(
@@ -40,7 +40,7 @@ const AccountActions = (props: any) => {
           "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
         );
 
-      console.log(paymentTransactionEnvelope);
+      // console.log(paymentTransactionEnvelope);
 
       const jwt = await StellarService.getAuthToken(secretKey);
 

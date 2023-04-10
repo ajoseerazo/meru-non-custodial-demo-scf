@@ -51,7 +51,7 @@ class StellarService {
   };
 
   static signRawTransacton(transactionString: string, secretKey: string) {
-    console.log(transactionString);
+    // console.log(transactionString);
 
     const transaction = StellarSdk.TransactionBuilder.fromXDR(
       transactionString,
@@ -75,7 +75,7 @@ class StellarService {
       Networks.TESTNET
     );
 
-    console.log(`JWT Token: ${jwt}`);
+    // console.log(`JWT Token: ${jwt}`);
 
     return jwt;
   };
@@ -113,7 +113,7 @@ class StellarService {
 
     const signedTransaction = transaction.toEnvelope().toXDR("base64");
 
-    console.log("Signed Transaction", signedTransaction);
+    // console.log("Signed Transaction", signedTransaction);
 
     response = await fetch(`${SEP_10_WEB_AUTH_SERVER}`, {
       method: "POST",

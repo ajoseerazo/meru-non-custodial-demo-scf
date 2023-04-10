@@ -17,7 +17,7 @@ class StellarCoreAPI {
       }
     ).then((res) => res.json());
 
-    console.log(result);
+    // console.log(result);
 
     if (result.error) {
       throw new Error(result.message);

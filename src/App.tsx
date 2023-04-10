@@ -34,7 +34,7 @@ export default function App() {
   }, []);
 
   const onBalancesLoaded = useCallback((balances: Array<any>) => {
-    console.log(balances);
+    // console.log(balances);
 
     const hasUSDC = balances.find((balance) => {
       return (
