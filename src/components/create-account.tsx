@@ -79,7 +79,7 @@ const CreateAccount = ({
 
       const { signers } = await Sep30API.registerAccount(
         publicKey,
-        "ajose.erazo@gmail.com",
+        "exmaple@gmail.com", // Only for test purposes
         jwt2
       );
 
@@ -119,66 +119,6 @@ const CreateAccount = ({
       );
 
       await StellarService.submitTransaction(changeTrustlineTransactionSigned);
-
-      // const changeSignersTransactionString = await StellarService.changeSigners(
-      //   deviceKeypair.publicKey(),
-      //   secretKey
-      // );
-
-      // const changeSignersTransaction =
-      //   StellarService.buildTransactionFromString(
-      //     changeSignersTransactionString
-      //   );
-
-      // await StellarService.submitTransaction(changeSignersTransaction);
-
-      // const jwt = await StellarService.getAuthToken();
-
-      // const { signers } = await Sep30API.registerAccount(
-      //   publicKey,
-      //   "ajose.erazo@gmail.com",
-      //   jwt
-      // );
-
-      // console.log(signers);
-
-      // const jwt2 = await StellarService.getAuthToken();
-
-      // const trustTransactionEnvelope =
-      //   await StellarCoreAPI.getCreateTrustlineWithAssetEnvelop(
-      //     "USDC",
-      //     "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-      //     publicKey,
-      //     jwt2
-      //   );
-
-      // console.log(trustTransactionEnvelope);
-
-      // // const changeSignersTransaction = await StellarService.changeSigners(
-      // //   signers[0].key
-      // // );
-
-      // const jwt2 = await StellarService.getAuthToken();
-
-      // const { transaction: transactionBumpedString } =
-      //   await StellarCoreAPI.getTransactionBumped(
-      //     changeSignersTransaction,
-      //     jwt2
-      //   );
-
-      // console.log(transactionBumpedString);
-
-      // const transactionBumped = StellarService.buildTransactionFromString(
-      //   transactionBumpedString
-      // );
-
-      // console.log(transactionBumped);
-
-      // await StellarService.submitTransaction(transactionBumped);
-
-      // console.log("Signers Changed");
-
-      // console.log(changeSignersTransaction);
 
       localStorage.setItem("publicKey", publicKey);
 

@@ -1,11 +1,11 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = "123456";
+const ENCRYPTATION_KEY = "123456"; // Only for test purposes. This should be the password of the account
 
 export const encryptSecretKey = (secretKey: string, key?: string) => {
   const encryptedSecretKey = CryptoJS.AES.encrypt(
     secretKey,
-    SECRET_KEY
+    ENCRYPTATION_KEY
   ).toString();
 
   localStorage.setItem(key ?? "encryptedSecretKey", encryptedSecretKey);
@@ -16,10 +16,9 @@ export const encryptSecretKey = (secretKey: string, key?: string) => {
 export const getSecretKey = (key?: string) => {
   const encryptedSecretKey = localStorage.getItem(key ?? "encryptedSecretKey");
 
-  // Decrypt the secret key using the password '123456'
   const decryptedSecretKey = CryptoJS.AES.decrypt(
     encryptedSecretKey!,
-    SECRET_KEY
+    ENCRYPTATION_KEY
   ).toString(CryptoJS.enc.Utf8);
 
   return decryptedSecretKey;
